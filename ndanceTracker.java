@@ -121,7 +121,7 @@ public class ndanceTracker {
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(frame,
                         "Error generating signature!",
-                        "Error", 
+                        "Error",
                         JOptionPane.ERROR_MESSAGE);
                 }
             });
