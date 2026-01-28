@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beep Sound Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .container {
+            text-align: center;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>beep</h1>
+        <button onclick="beep()">Click to Beep</button>
+    </div>
+
+    <script>
+        // Create audio context once (outside the function)
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const audioCtx = new AudioContext();
+
+        function beep() {
+            // Resume audio context if it's suspended (required by some browsers)
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            // Create oscillator (sound source)
+            const oscillator = audioCtx.createOscillator();
+            oscillator.type = "sine";      // clean beep
+            oscillator.frequency.value = 880; // frequency in Hz (standard beep)
+
+            // Create volume control
+            const gainNode = audioCtx.createGain();
+            gainNode.gain.value = 0.1; // low volume to avoid harsh sound
+
+            // Connect nodes
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            // Play sound
+            const now = audioCtx.currentTime;
+            oscillator.start(now);
+            oscillator.stop(now + 0.15); // 150 ms beep
+        }
+    </script>
+</body>
+</html>
