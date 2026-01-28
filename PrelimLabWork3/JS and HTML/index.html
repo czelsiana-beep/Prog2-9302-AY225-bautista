@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prelim Grade Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .input-section {
+            padding: 30px;
+            background: #f8f9fa;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .button-container {
+            text-align: center;
+            padding: 0 30px 30px 30px;
+            background: #f8f9fa;
+        }
+        
+        .calculate-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+        }
+        
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .calculate-btn:active {
+            transform: translateY(0);
+        }
+        
+        .output-section {
+            padding: 30px;
+            display: none;
+        }
+        
+        .output-section.show {
+            display: block;
+        }
+        
+        .output-box {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            color: #333;
+        }
+        
+        .section-title {
+            font-weight: bold;
+            color: #667eea;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .section-title:first-child {
+            margin-top: 0;
+        }
+        
+        .divider {
+            border-bottom: 1px solid #ddd;
+            margin: 15px 0;
+        }
+        
+        .error {
+            background: #fee;
+            border-left: 4px solid #f44336;
+            padding: 15px;
+            border-radius: 8px;
+            color: #c62828;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Prelim Grade Calculator</h1>
+            <p>Calculate your required Prelim Exam score to pass or achieve excellence</p>
+        </div>
+        
+        <div class="input-section">
+            <div class="input-group">
+                <label for="attendance">Number of Attendances:</label>
+                <input type="number" id="attendance" placeholder="Enter attendance count" min="0">
+            </div>
+            
+            <div class="input-group">
+                <label for="labWork1">Lab Work 1 Grade:</label>
+                <input type="number" id="labWork1" placeholder="Enter grade (0-100)" min="0" max="100" step="0.01">
+            </div>
+            
+            <div class="input-group">
+                <label for="labWork2">Lab Work 2 Grade:</label>
+                <input type="number" id="labWork2" placeholder="Enter grade (0-100)" min="0" max="100" step="0.01">
+            </div>
+            
+            <div class="input-group">
+                <label for="labWork3">Lab Work 3 Grade:</label>
+                <input type="number" id="labWork3" placeholder="Enter grade (0-100)" min="0" max="100" step="0.01">
+            </div>
+        </div>
+        
+        <div class="button-container">
+            <button class="calculate-btn" onclick="calculateGrade()">Calculate Required Prelim Exam Score</button>
+        </div>
+        
+        <div class="output-section" id="outputSection">
+            <div id="outputContent"></div>
+        </div>
+    </div>
+
+    <script>
+        function calculateGrade() {
+            // Clear previous output
+            const outputSection = document.getElementById('outputSection');
+            const outputContent = document.getElementById('outputContent');
+            
+            // Get input values
+            const attendance = parseFloat(document.getElementById('attendance').value);
+            const labWork1 = parseFloat(document.getElementById('labWork1').value);
+            const labWork2 = parseFloat(document.getElementById('labWork2').value);
+            const labWork3 = parseFloat(document.getElementById('labWork3').value);
+            
+            // Validate inputs
+            if (isNaN(attendance) || isNaN(labWork1) || isNaN(labWork2) || isNaN(labWork3)) {
+                outputContent.innerHTML = '<div class="error">❌ Please fill in all fields with valid numbers!</div>';
+                outputSection.classList.add('show');
+                return;
+            }
+            
+            if (attendance < 0) {
+                outputContent.innerHTML = '<div class="error">❌ Attendance cannot be negative!</div>';
+                outputSection.classList.add('show');
+                return;
+            }
+            
+            if (labWork1 < 0 || labWork1 > 100 || labWork2 < 0 || labWork2 > 100 || labWork3 < 0 || labWork3 > 100) {
+                outputContent.innerHTML = '<div class="error">❌ Lab work grades must be between 0 and 100!</div>';
+                outputSection.classList.add('show');
+                return;
+            }
+            
+            // Calculate results
+            
+            // Formula 1: Lab Work Average = (LW1 + LW2 + LW3) / 3
+            const labWorkAverage = (labWork1 + labWork2 + labWork3) / 3.0;
+            
+            // Formula 2: Class Standing = (0.40 × Attendance) + (0.60 × Lab Work Average)
+            const classStanding = (0.40 * attendance) + (0.60 * labWorkAverage);
+            
+            // Formula 3: Prelim Grade = (0.30 × Prelim Exam) + (0.70 × Class Standing)
+            // Rearranged to solve for Prelim Exam:
+            // Prelim Exam = (Prelim Grade - 0.70 × Class Standing) / 0.30
+            
+            const requiredExamForPassing = (75.0 - (0.70 * classStanding)) / 0.30;
+            const requiredExamForExcellent = (100.0 - (0.70 * classStanding)) / 0.30;
+            
+            // Build output
+            let output = '<div class="output-box">';
+            output += '<div style="text-align: center; font-weight: bold; font-size: 16px; margin-bottom: 20px; color: #667eea;">';
+            output += '═══════════════════════════════════════════════════════\n';
+            output += '           PRELIM GRADE CALCULATION RESULTS\n';
+            output += '═══════════════════════════════════════════════════════';
+            output += '</div>';
+            
+            output += '<div class="section-title">INPUT DATA:</div>';
+            output += `Attendance Score:           ${attendance}\n`;
+            output += `Lab Work 1 Grade:           ${labWork1.toFixed(2)}\n`;
+            output += `Lab Work 2 Grade:           ${labWork2.toFixed(2)}\n`;
+            output += `Lab Work 3 Grade:           ${labWork3.toFixed(2)}\n`;
+            
+            output += '<div class="divider"></div>';
+            output += '<div class="section-title">COMPUTED VALUES:</div>';
+            output += `Lab Work Average:           ${labWorkAverage.toFixed(2)}\n`;
+            output += `Class Standing (70%):       ${classStanding.toFixed(2)}\n`;
+            
+            output += '<div class="divider"></div>';
+            output += '<div class="section-title">REQUIRED PRELIM EXAM SCORES:</div>';
+            output += `To Pass (75):               ${requiredExamForPassing.toFixed(2)}\n`;
+            output += `For Excellent (100):        ${requiredExamForExcellent.toFixed(2)}\n`;
+            
+            output += '<div class="divider"></div>';
+            output += '<div class="section-title">EVALUATION:</div>';
+            
+            // Provide remarks based on the required scores
+            if (requiredExamForPassing > 100) {
+                output += '⚠ Unfortunately, it is mathematically IMPOSSIBLE to\n';
+                output += '  pass the Prelim period, even with a perfect score\n';
+                output += '  of 100 on the Prelim Exam. Your Class Standing is\n';
+                output += '  too low to achieve a passing grade of 75.\n';
+            } else if (requiredExamForPassing < 0) {
+                output += '★ Congratulations! You have already PASSED the Prelim\n';
+                output += '  period based on your Class Standing alone!\n';
+                output += '  Any score on the Prelim Exam will keep you passing.\n';
+            } else {
+                output += `• You need a Prelim Exam score of ${requiredExamForPassing.toFixed(2)} to pass.\n`;
+                if (requiredExamForPassing <= 100) {
+                    output += '  This is achievable with proper preparation.\n';
+                }
+            }
+            
+            output += '\n';
+            
+            if (requiredExamForExcellent > 100) {
+                output += '⚠ Achieving an Excellent grade (100) is not possible,\n';
+                output += '  as it would require a Prelim Exam score above 100.\n';
+            } else if (requiredExamForExcellent < 0) {
+                output += '★ You have already achieved EXCELLENT standing!\n';
+                output += '  Your Class Standing guarantees a grade of 100.\n';
+            } else {
+                output += `• You need a Prelim Exam score of ${requiredExamForExcellent.toFixed(2)} for excellent.\n`;
+                if (requiredExamForExcellent <= 100) {
+                    output += '  Aim high and give your best effort!\n';
+                }
+            }
+            
+            output += '\n═══════════════════════════════════════════════════════';
+            output += '</div>';
+            
+            outputContent.innerHTML = output;
+            outputSection.classList.add('show');
+            
+            // Scroll to output
+            outputSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        
+        // Allow Enter key to trigger calculation
+        document.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                calculateGrade();
+            }
+        });
+    </script>
+</body>
+</html>
